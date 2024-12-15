@@ -14,24 +14,38 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tic Tac Toe "
+        android:text="@string/tic_tac_toe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="200dp"
         android:textSize="60sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
         />
 
     <Button
-        android:id="@+id/play"
+        android:id="@+id/play_with_friend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/red_button"
-        android:text="Play with friend"
-        android:textSize="40sp"
+        android:text="@string/play_with_friend"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <Button
+        android:id="@+id/play_with_bot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/red_button"
+        android:text="@string/play_with_bot"
+        android:textSize="30sp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/play_with_friend" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

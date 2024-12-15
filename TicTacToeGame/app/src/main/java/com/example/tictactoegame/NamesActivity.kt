@@ -16,10 +16,9 @@ class NamesActivity : AppCompatActivity() {
         val player2 = findViewById<EditText>(R.id.player_2)
 
         submitButton.setOnClickListener {
-            val name1 = player1.text.toString().trim()
-            val name2 = player2.text.toString().trim()
+            val name1 = player1.text.toString()
+            val name2 = player2.text.toString()
             if (name1 == "" || name2 == "") {
-                println("pizdets")
                 Toast.makeText(this, "You have empty fields", Toast.LENGTH_LONG).show()
             }
             else {
