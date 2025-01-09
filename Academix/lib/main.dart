@@ -29,7 +29,7 @@ class WelcomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Image(
-              image: AssetImage('assets/welcome.png'),
+              image: AssetImage('assets/images/welcome.png'),
               height: 400,
               width: 400,
             ),
@@ -84,28 +84,92 @@ class WelcomeScreen extends StatelessWidget {
   }
 }
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
+
+  @override
+  _SignInScreenState createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign In'),
-      ),
+      backgroundColor: const Color(0xFFE5E5E5),
+
       body: Center(
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 30, horizontal: 60)
-          ),
-          onPressed: () {
-            Navigator.pop(context); // Go back to the WelcomeScreen
-          },
-          child: const Text(
-            'Go Back',
-            style: TextStyle(
-                fontSize: 40),
+        child: Column(
+          children: [
+            const SizedBox(height: 40,),
+            const Image(
+              image: AssetImage('assets/images/signIn.png'),
+              height: 400,
+              width: 500,
             ),
+
+            const SizedBox(height: 60,),
+
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Email address',
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10,),
+
+            TextFormField(
+              decoration: InputDecoration(
+                  labelText: 'name@example.com',
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white
+              ),
+            ),
+
+            const SizedBox(height: 30,),
+
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Password',
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10,),
+
+            TextField(
+              obscureText: !_isPasswordVisible,
+              decoration: InputDecoration(
+                labelText: 'Enter here',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                  icon: Icon(
+                    _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
