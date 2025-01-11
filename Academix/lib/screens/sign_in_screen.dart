@@ -53,6 +53,7 @@ class _SignInScreenState extends State<SignInScreen> {
               child: TextFormField(
                 decoration: InputDecoration(
                   labelText:'name@example.com',
+                  labelStyle: TextStyle(fontSize: 20),
                   border: InputBorder.none,
 
                   enabledBorder: OutlineInputBorder(
@@ -100,6 +101,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
                   labelText: 'Enter here',
+                  labelStyle: TextStyle(fontSize: 20),
                   border: InputBorder.none,
 
                   enabledBorder: OutlineInputBorder(
