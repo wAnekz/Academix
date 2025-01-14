@@ -59,7 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: TextStyle(
                       color: Colors.black54,
                       fontSize: 22,
-                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Exo-semibold'
                     ),
                   ),
                 ),
@@ -71,7 +71,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   controller: _nameController,
                   decoration: InputDecoration(
                     labelText: 'Your name',
-                    labelStyle: TextStyle(fontSize: 20),
+                    labelStyle: TextStyle(fontSize: 20, fontFamily: 'Exo-regular'),
                     border: InputBorder.none,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -98,7 +98,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: TextStyle(
                       color: Colors.black54,
                       fontSize: 22,
-                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Exo-semibold'
                     ),
                   ),
                 ),
@@ -110,7 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   controller: _emailController, // Controller added here
                   decoration: InputDecoration(
                     labelText: 'name@example.com',
-                    labelStyle: TextStyle(fontSize: 20),
+                    labelStyle: TextStyle(fontSize: 20, fontFamily: 'Exo-regular'),
                     border: InputBorder.none,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -137,7 +137,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: TextStyle(
                       color: Colors.black54,
                       fontSize: 22,
-                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Exo-semibold'
                     ),
                   ),
                 ),
@@ -150,7 +150,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
                     labelText: 'Enter your password',
-                    labelStyle: TextStyle(fontSize: 20),
+                    labelStyle: TextStyle(fontSize: 20, fontFamily: 'Exo-regular'),
                     border: InputBorder.none,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -191,7 +191,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 child: const Text(
                   'Sign Up',
-                  style: TextStyle(fontSize: 28),
+                  style: TextStyle(fontSize: 28, fontFamily: 'Exo-semibold'),
                 ),
               ),
               const SizedBox(height: 22),
@@ -201,7 +201,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: const TextStyle(
                     color: Colors.black54,
                     fontSize: 22,
-                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Exo-regular'
                   ),
                   children: [
                     TextSpan(

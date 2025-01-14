@@ -25,8 +25,8 @@ class WelcomeScreen extends StatelessWidget {
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 36,
-                fontWeight: FontWeight.w400,
                 height: 2,
+                fontFamily: 'Exo-semibold'
               ),
             ),
             const SizedBox(height: 16),
@@ -37,7 +37,7 @@ class WelcomeScreen extends StatelessWidget {
               style: TextStyle(
                 color: Color(0xFF636D77),
                 fontSize: 22,
-                fontWeight: FontWeight.w400,
+                fontFamily: 'Exo-regular'
               ),
             ),
             const SizedBox(height: 100),
@@ -59,7 +59,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               child: const Text(
                 'Let\'s go!',
-                style: TextStyle(fontSize: 30),
+                style: TextStyle(fontSize: 30, fontFamily: 'Exo-semibold'),
               ),
             ),
           ],
