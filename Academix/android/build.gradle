@@ -28,6 +28,6 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.google.gms:google-services:4.4.2" // Make sure the Google services plugin is here
+        classpath "com.google.gms:google-services:4.4.2"
     }
 }
