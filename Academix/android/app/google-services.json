@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1089702330837",
+    "project_id": "academix-e93b7",
+    "storage_bucket": "academix-e93b7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1089702330837:android:8b300320194b1bee077d5c",
+        "android_client_info": {
+          "package_name": "com.example.academix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDb3xUHSmhdEnabKPytxc1QKd-1FeF21-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

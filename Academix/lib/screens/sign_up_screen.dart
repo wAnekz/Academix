@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'sign_in_screen.dart';
-
-void main() {
-  runApp(const MaterialApp(
-    home: SignUpScreen(),
-  ));
-}
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -17,6 +12,29 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   bool _isPasswordVisible = false;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+
+  Future<void> _signUp() async {
+    if (_nameController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill all fields')));
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SignUpScreen()),
+      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Error: $e')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +46,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
-
               const Image(
                 image: AssetImage('assets/images/sign_up.png'),
                 height: 300,
               ),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: const Align(
@@ -48,12 +64,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 10),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: TextFormField(
+                  controller: _nameController,
                   decoration: InputDecoration(
                     labelText: 'Your name',
                     labelStyle: TextStyle(fontSize: 20),
@@ -73,10 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: const TextStyle(fontSize: 22),
                 ),
               ),
-
-
               const SizedBox(height: 20),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: const Align(
@@ -91,12 +103,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 10),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: TextFormField(
+                  controller: _emailController, // Controller added here
                   decoration: InputDecoration(
                     labelText: 'name@example.com',
                     labelStyle: TextStyle(fontSize: 20),
@@ -116,9 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: const TextStyle(fontSize: 22),
                 ),
               ),
-
               const SizedBox(height: 20),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: const Align(
@@ -133,12 +142,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 10),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: TextField(
+                  controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
                     labelText: 'Enter your password',
@@ -170,16 +178,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: const TextStyle(fontSize: 22),
                 ),
               ),
-
               const SizedBox(height: 40),
-
               ElevatedButton(
-                onPressed: () {
-                  //логика регистрации
-                },
+                onPressed: _signUp,
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 100, vertical: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 14),
                   backgroundColor: const Color(0xFF5667FD),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -188,19 +191,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 child: const Text(
                   'Sign Up',
-                  style: TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 28),
                 ),
               ),
-
               const SizedBox(height: 22),
-
               RichText(
                 text: TextSpan(
-                  text: "You have account? ",
+                  text: "You have an account? ",
                   style: const TextStyle(
-                      color: Colors.black54,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w400
+                    color: Colors.black54,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w400,
                   ),
                   children: [
                     TextSpan(
