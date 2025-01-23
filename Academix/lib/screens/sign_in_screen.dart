@@ -4,6 +4,62 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'sign_up_screen.dart';
 import 'country_selection_screen.dart';
 
+class CustomTextField extends StatelessWidget {
+  final String labelText;
+  final String? hintText;
+  final bool obscureText;
+  final TextEditingController? controller;
+  final Widget? suffixIcon;
+
+  const CustomTextField({
+    Key? key,
+    required this.labelText,
+    this.hintText,
+    this.obscureText = false,
+    this.controller,
+    this.suffixIcon,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          labelText,
+          style: const TextStyle(
+            color: Colors.black54,
+            fontSize: 24,
+            fontFamily: 'Exo-semibold',
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextField(
+          controller: controller,
+          obscureText: obscureText,
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: InputBorder.none,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            suffixIcon: suffixIcon,
+          ),
+          style: const TextStyle(fontSize: 22, fontFamily: 'Exo-regular'),
+        ),
+      ],
+    );
+  }
+}
+
+
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -55,98 +111,36 @@ class _SignInScreenState extends State<SignInScreen> {
             const SizedBox(height: 60),
 
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Email address',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 22,
-                    fontFamily: 'Exo-semibold'
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: TextFormField(
-                controller: _emailController, // Controller added here
-                decoration: InputDecoration(
-                  labelText: 'name@example.com',
-                  labelStyle: TextStyle(fontSize: 20, fontFamily: 'Exo-regular'),
-                  border: InputBorder.none,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  suffixIcon: Icon(Icons.mail),
-                ),
-                style: const TextStyle(fontSize: 22),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: CustomTextField(
+                labelText: 'Email address',
+                hintText: 'name@example.com',
+                controller: _emailController,
+                suffixIcon: const Icon(Icons.mail),
               ),
             ),
 
             const SizedBox(height: 30),
 
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Password',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 22,
-                    fontFamily: 'Exo-semibold'
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: TextField(
-                controller: _passwordController,
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: CustomTextField(
+                labelText: 'Password',
+                hintText: 'Enter here',
                 obscureText: !_isPasswordVisible,
-                decoration: InputDecoration(
-                  labelText: 'Enter here',
-                  labelStyle: TextStyle(fontSize: 20, fontFamily: 'Exo-regular'),
-                  border: InputBorder.none,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
+                controller: _passwordController,
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                  icon: Icon(
+                    _isPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility,
                   ),
                 ),
-                style: const TextStyle(fontSize: 22),
               ),
             ),
 
@@ -167,7 +161,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 style: TextStyle(fontSize: 30, fontFamily: 'Exo-semibold'),
               ),
             ),
+
             const SizedBox(height: 22),
+
             RichText(
               text: TextSpan(
                 text: "Don't have an account? ",

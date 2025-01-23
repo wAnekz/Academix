@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'sign_in_screen.dart';
+import 'package:academix/data_provider.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -16,6 +18,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
 
+
+
   Future<void> _signUp() async {
     if (_nameController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill all fields')));
@@ -27,10 +31,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      final dataProvider = Provider.of<DataProvider>(context, listen: false);
+      dataProvider.name = _nameController.text.trim().toString();
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const SignInScreen()),
       );
+
+
+
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Error: $e')));
     }
@@ -45,140 +56,60 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 40),
+
               const Image(
                 image: AssetImage('assets/images/sign_up.png'),
                 height: 300,
               ),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Name',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 22,
-                      fontFamily: 'Exo-semibold'
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: TextFormField(
+                child: CustomTextField(
+                  labelText: 'Name',
+                  hintText: 'Your name',
                   controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Your name',
-                    labelStyle: TextStyle(fontSize: 20, fontFamily: 'Exo-regular'),
-                    border: InputBorder.none,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    suffixIcon: const Icon(Icons.account_circle),
-                  ),
-                  style: const TextStyle(fontSize: 22),
+                  suffixIcon: const Icon(Icons.account_circle)
                 ),
               ),
-              const SizedBox(height: 20),
+
+              const SizedBox(height: 30,),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Email address',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 22,
-                      fontFamily: 'Exo-semibold'
-                    ),
-                  ),
+                child: CustomTextField(
+                  labelText: 'Email address',
+                  hintText: 'name@example.com',
+                  controller: _emailController,
+                  suffixIcon: const Icon(Icons.mail),
                 ),
               ),
-              const SizedBox(height: 10),
+
+              const SizedBox(height: 30),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: TextFormField(
-                  controller: _emailController, // Controller added here
-                  decoration: InputDecoration(
-                    labelText: 'name@example.com',
-                    labelStyle: TextStyle(fontSize: 20, fontFamily: 'Exo-regular'),
-                    border: InputBorder.none,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    suffixIcon: const Icon(Icons.mail),
-                  ),
-                  style: const TextStyle(fontSize: 22),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Password',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 22,
-                      fontFamily: 'Exo-semibold'
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: TextField(
-                  controller: _passwordController,
+                child: CustomTextField(
+                  labelText: 'Password',
+                  hintText: 'Enter here',
                   obscureText: !_isPasswordVisible,
-                  decoration: InputDecoration(
-                    labelText: 'Enter your password',
-                    labelStyle: TextStyle(fontSize: 20, fontFamily: 'Exo-regular'),
-                    border: InputBorder.none,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
-                      icon: Icon(
-                        _isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
+                  controller: _passwordController,
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                     ),
                   ),
-                  style: const TextStyle(fontSize: 22),
                 ),
               ),
-              const SizedBox(height: 40),
+
+              const SizedBox(height: 60),
+
               ElevatedButton(
                 onPressed: _signUp,
                 style: ElevatedButton.styleFrom(

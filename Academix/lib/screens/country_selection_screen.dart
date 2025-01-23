@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'home_screen.dart';
+import 'package:academix/data_provider.dart';
+import 'package:provider/provider.dart';
 
 class CountrySelectionScreen extends StatefulWidget {
   const CountrySelectionScreen({super.key});
@@ -14,7 +16,7 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
   List<dynamic> countries = [];
   List<dynamic> filteredCountries = [];
   String? selectedCountryName;
-  int? selectedIndex; // Store the index of the selected country
+  int? selectedIndex;
 
   @override
   void initState() {
@@ -24,7 +26,7 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
 
   Future<void> _fetchCountries() async {
     final response =
-    await http.get(Uri.parse('https://restcountries.com/v3.1/all'));
+      await http.get(Uri.parse('https://restcountries.com/v3.1/all'));
     if (response.statusCode == 200) {final data = jsonDecode(response.body);
     setState(() {
       countries = data;
@@ -42,13 +44,14 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
             .toLowerCase()
             .contains(query.toLowerCase());
       }).toList();
-      // Reset selectedIndex when filtering
+
       selectedIndex = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final dataProvider = Provider.of<DataProvider>(context);
     return Scaffold(
       backgroundColor: const Color(0xFFE5E5E5),
       body: Center(
@@ -59,32 +62,55 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
               'Choose your country',
               style: TextStyle(
                   color: Colors.black,
-                  fontSize: 40,
-                  fontFamily: 'Exo-semibold'),
-            ),
-            const SizedBox(height: 50),Padding(
-              padding: const EdgeInsets.all(14),
-              child: TextField(
-                onChanged: _filterCountries,
-                decoration: InputDecoration(
-                  labelText: 'Search..',
-                  labelStyle: const TextStyle(
-                      fontSize: 26, fontFamily: 'Exo-regular'),
-                  border: InputBorder.none,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                style: const TextStyle(fontSize: 20),
+                  fontSize: 34,
+                  fontFamily: 'Exo-regular',
+                fontWeight: FontWeight.w600
               ),
             ),
+            const SizedBox(height: 50),
+        Padding(
+          padding: const EdgeInsets.all(14),
+          child: TextField(
+            onChanged: _filterCountries,
+            decoration: InputDecoration(
+              labelText: 'Search..',
+              labelStyle: const TextStyle(
+                fontSize: 26,
+                fontFamily: 'Exo-regular',
+              ),
+              border: InputBorder.none,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              suffixIcon: Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF5667FD),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.search_sharp,
+                    size: 34,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            style: const TextStyle(fontSize: 20),
+          ),
+        ),
+
+
             Expanded(
               child: ListView.builder(
                 itemCount: filteredCountries.length,
@@ -121,7 +147,7 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
                               ),
                               title: Text(
                                 filteredCountries[index]['name']['common'],
-                                style: const TextStyle(fontFamily: 'Exo-regular'),
+                                style: const TextStyle(fontFamily: 'Exo-regular', fontSize: 20),
                               ),
                             ),
                           ),
@@ -130,6 +156,7 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
                       const Divider(
                         color: Color(0xFFE5E5E5),
                         thickness: 1,
+                        height: 10,
                       ),
                     ],
                   );
@@ -140,13 +167,17 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
             ElevatedButton(
               onPressed: () {
                 if (selectedIndex != null) {
+                  dataProvider.country = selectedCountryName.toString();
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => HomeScreen(
-                          selectedCountryName: selectedCountryName),
+                        selectedCountryName: selectedCountryName!,
+                      ),
                     ),
                   );
+
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -164,7 +195,7 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
               ),
               child: const Text(
                 'Next',
-                style: TextStyle(fontSize: 30),
+                style: TextStyle(fontSize: 32),
               ),
             ),
             const SizedBox(height: 70),
