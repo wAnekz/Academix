@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'sign_in_screen.dart';
-import 'package:academix/data_provider.dart';
-import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -27,25 +26,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      final dataProvider = Provider.of<DataProvider>(context, listen: false);
-      dataProvider.name = _nameController.text.trim().toString();
+      String uid = userCredential.user!.uid;
+
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'name': _nameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'country': null,
+        'created_at': DateTime.now(),
+      });
 
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const SignInScreen()),
       );
-
-
-
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Error: $e')));
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               const Image(
                 image: AssetImage('assets/images/sign_up.png'),
-                height: 300,
+                height: 260,
               ),
 
               Padding(
@@ -72,7 +76,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
 
-              const SizedBox(height: 30,),
+              const SizedBox(height: 20,),
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -84,7 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -108,7 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
 
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
 
               ElevatedButton(
                 onPressed: _signUp,

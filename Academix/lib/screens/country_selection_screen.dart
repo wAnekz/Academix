@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'home_screen.dart';
-import 'package:academix/data_provider.dart';
-import 'package:provider/provider.dart';
+import 'dart:async';
+
 
 class CountrySelectionScreen extends StatefulWidget {
   const CountrySelectionScreen({super.key});
 
   @override
-  State<CountrySelectionScreen> createState() => _CountrySelectionScreenState();
+  _CountrySelectionScreenState createState() => _CountrySelectionScreenState();
 }
 
 class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
@@ -17,21 +19,44 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
   List<dynamic> filteredCountries = [];
   String? selectedCountryName;
   int? selectedIndex;
+  String? userId;
 
   @override
   void initState() {
     super.initState();
     _fetchCountries();
+    _getUserId();  // Получаем userId при инициализации
   }
 
+  // Получаем текущий userId через фаербэйс
+  Future<void> _getUserId() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        userId = user.uid;
+      });
+      _fetchUserData(user.uid);
+    }
+  }
+
+  // Загружаем данные пользователя из Firestore
+  Future<void> _fetchUserData(String userId) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    } catch (e) {
+      throw Exception('Error fetching user data: $e');
+    }
+  }
+
+  // Загрузка списка стран через API
   Future<void> _fetchCountries() async {
-    final response =
-      await http.get(Uri.parse('https://restcountries.com/v3.1/all'));
-    if (response.statusCode == 200) {final data = jsonDecode(response.body);
-    setState(() {
-      countries = data;
-      filteredCountries = countries;
-    });
+    final response = await http.get(Uri.parse('https://restcountries.com/v3.1/all'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        countries = data;
+        filteredCountries = countries;
+      });
     } else {
       throw Exception('Failed to download countries. Try again later');
     }
@@ -51,7 +76,6 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dataProvider = Provider.of<DataProvider>(context);
     return Scaffold(
       backgroundColor: const Color(0xFFE5E5E5),
       body: Center(
@@ -61,56 +85,54 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
             const Text(
               'Choose your country',
               style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 34,
-                  fontFamily: 'Exo-regular',
-                fontWeight: FontWeight.w600
+                color: Colors.black,
+                fontSize: 34,
+                fontFamily: 'Exo-regular',
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 50),
-        Padding(
-          padding: const EdgeInsets.all(14),
-          child: TextField(
-            onChanged: _filterCountries,
-            decoration: InputDecoration(
-              labelText: 'Search..',
-              labelStyle: const TextStyle(
-                fontSize: 26,
-                fontFamily: 'Exo-regular',
-              ),
-              border: InputBorder.none,
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              suffixIcon: Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF5667FD),
-                    borderRadius: BorderRadius.circular(8),
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: TextField(
+                onChanged: _filterCountries,
+                decoration: InputDecoration(
+                  labelText: 'Search..',
+                  labelStyle: const TextStyle(
+                    fontSize: 26,
+                    fontFamily: 'Exo-regular',
                   ),
-                  child: const Icon(
-                    Icons.search_sharp,
-                    size: 34,
-                    color: Colors.white,
+                  border: InputBorder.none,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF5667FD),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.search_sharp,
+                        size: 34,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
+                style: const TextStyle(fontSize: 20),
               ),
             ),
-            style: const TextStyle(fontSize: 20),
-          ),
-        ),
-
-
             Expanded(
               child: ListView.builder(
                 itemCount: filteredCountries.length,
@@ -165,28 +187,35 @@ class _CountrySelectionScreenState extends State<CountrySelectionScreen> {
             ),
             const SizedBox(height: 50),
             ElevatedButton(
-              onPressed: () {
-                if (selectedIndex != null) {
-                  dataProvider.country = selectedCountryName.toString();
+              onPressed: () async {
+                if (selectedIndex != null && userId != null) {
+                  try {
+                    // Сохраняем страну в Firestore
+                    await FirebaseFirestore.instance.collection('users').doc(userId).update({
+                      'country': selectedCountryName,
+                    });
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomeScreen(
-                        selectedCountryName: selectedCountryName!,
+                    // Переход на другой экран
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomeScreen(
+                        ),
                       ),
-                    ),
-                  );
-
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to save country: $e')),
+                    );
+                  }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Please choose the country')));
+                    const SnackBar(content: Text('Please choose a country')),
+                  );
                 }
               },
               style: ElevatedButton.styleFrom(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 100, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 14),
                 backgroundColor: const Color(0xFF5667FD),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(

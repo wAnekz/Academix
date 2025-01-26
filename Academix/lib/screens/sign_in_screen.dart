@@ -3,6 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'sign_up_screen.dart';
 import 'country_selection_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class CustomTextField extends StatelessWidget {
   final String labelText;
@@ -52,7 +54,7 @@ class CustomTextField extends StatelessWidget {
             fillColor: Colors.white,
             suffixIcon: suffixIcon,
           ),
-          style: const TextStyle(fontSize: 22, fontFamily: 'Exo-regular'),
+          style: const TextStyle(fontSize: 20, fontFamily: 'Exo-regular'),
         ),
       ],
     );
@@ -74,41 +76,58 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> _signIn() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter both email and password.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both email and password.')),
+      );
       return;
     }
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
-        password : _passwordController.text.trim(),
+        password: _passwordController.text.trim(),
       );
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const CountrySelectionScreen()),
-      );
+
+      final userId = userCredential.user?.uid;
+      final email = userCredential.user?.email;
+
+      if (userId != null) {
+        // Сохраняем userId в Firestore
+        final usersCollection = FirebaseFirestore.instance.collection('users');
+        await usersCollection.doc(userId).set({
+          'email': email,
+        }, SetOptions(merge: true)); // Merge предотвратит перезапись данных
+
+        // Переход на следующий экран
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const CountrySelectionScreen()),
+        );
+      }
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Login failed, error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Login failed, error: $e')),
+      );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFE5E5E5),
       body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 40),
 
             const Image(
               image: AssetImage('assets/images/signIn.png'),
-              height: 400,
+              height: 360,
               width: 500,
             ),
 
-            const SizedBox(height: 60),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),

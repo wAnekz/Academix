@@ -40,7 +40,7 @@ class WelcomeScreen extends StatelessWidget {
                 fontFamily: 'Exo-regular'
               ),
             ),
-            const SizedBox(height: 100),
+            const SizedBox(height: 50),
 
             ElevatedButton(
               onPressed: () {
