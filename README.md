@@ -62,8 +62,8 @@ This project is licensed under the [MIT License](LICENSE).
 ## Contact
 For any inquiries or support:
 * **Developer:** Your Name
-* **Email:** your.email@example.com
-* **GitHub:** [yourusername](https://github.com/yourusername)
+* **Email:** dilanabkanov@gmail.com
+* **GitHub:** [wAnekz](https://github.com/wAnekz)
 
 ---
 Happy coding!
